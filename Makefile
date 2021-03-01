@@ -1,12 +1,12 @@
 
-docker-build:
-	docker build -t local-summary -f Dockerfile ./
+build-local:
+	docker build -t summary-local -f Dockerfile ./
 
-docker-service-build:
-	docker build -t summary-service -f Dockerfile.service ./
+build-service:
+	docker build --name summary-service -t summary-service -f Dockerfile.service ./
 
-docker-service-run:
-	docker run --rm -it -p 5000:5000 summary-service:latest
+run-service: build-service
+	docker run --rm -it --name summary-service -p 18080:8080 summary-service:latest
 
-docker-run-test:
-	docker run --rm local-summary:latest bash -i -c "pytest"
+test-local: build-local
+	docker run --rm --name summary-local summary-local:latest bash -i -c "pytest"

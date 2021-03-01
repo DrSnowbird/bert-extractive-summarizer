@@ -57,7 +57,7 @@ def hello_world():
 
 @app.route('/summarize_by_ratio', methods=['POST'])
 def convert_raw_text_by_ratio():
-    ratio = float(request.args.get('ratio', 0.2))
+    ratio = float(request.args.get('ratio', 0.1))
     min_length = int(request.args.get('min_length', 25))
     max_length = int(request.args.get('max_length', 500))
 
@@ -74,7 +74,7 @@ def convert_raw_text_by_ratio():
 
 @app.route('/summarize_by_sentence', methods=['POST'])
 def convert_raw_text_by_sent():
-    num_sentences = int(request.args.get('num_sentences', 5))
+    num_sentences = int(request.args.get('num_sentences', 3))
     min_length = int(request.args.get('min_length', 25))
     max_length = int(request.args.get('max_length', 500))
 

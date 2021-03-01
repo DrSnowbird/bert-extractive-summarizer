@@ -58,7 +58,7 @@ Number of sentences can be supplied as a ratio or an integer. Examples are provi
 from summarizer import Summarizer
 body = 'Text body that you want to summarize with BERT'
 model = Summarizer()
-result = model(body, ratio=0.2)  # Specified with ratio
+result = model(body, ratio=0.1)  # Specified with ratio
 result = model(body, num_sentences=3)  # Will return 3 sentences 
 ```
 
@@ -69,7 +69,7 @@ You can also retrieve the embeddings of the summarization. Examples are below:
 from summarizer import Summarizer
 body = 'Text body that you want to summarize with BERT'
 model = Summarizer()
-result = model.run_embeddings(body, ratio=0.2)  # Specified with ratio. 
+result = model.run_embeddings(body, ratio=0.1)  # Specified with ratio. 
 result = model.run_embeddings(body, num_sentences=3)  # Will return (3, N) embedding numpy matrix.
 result = model.run_embeddings(body, num_sentences=3, aggregate='mean')  # Will return Mean aggregate over embeddings. 
 ```
@@ -179,8 +179,9 @@ There is a provided flask service and corresponding Dockerfile. Running the serv
 the Makefile with the two commands:
 
 ```
-make docker-service-build
-make docker-service-run
+make build-service
+or, 
+make run-service
 ```
 
 This will use the Bert-base-uncased model, which has a small representation. The docker run also accepts a variety of 
@@ -188,7 +189,7 @@ arguments for custom and different models. This can be done through a command su
 
 ```
 docker build -t summary-service -f Dockerfile.service ./
-docker run --rm -it -p 5000:5000 summary-service:latest -model bert-large-uncased
+docker run --rm --name summary-service -it -p 18080:8080 summary-service:latest -model bert-large-uncased
 ```
 
 Other arguments can also be passed to the server. Below includes the list of available arguments.
@@ -199,7 +200,15 @@ Other arguments can also be passed to the server. Below includes the list of ava
 * -port: Determines the port to use.
 * -host: Determines the host to use.
 
-Once the service is running, you can make a summarization command at the `http://localhost:5000/summarize` endpoint. 
+Once the service is running, you can make a summarization command at two routes:
+1. `http://localhost:18080/summarize_by_ratio?ratio=0.1&min_length=25&max_length`
+2. `http://localhost:18080/summarize_by_sentence?num_sentences`
+
+Examples:
+```
+ http://localhost:18080/summarize_by_ratio?ratio=0.1&min_length=25&max_length=500
+ http://localhost:18080/summarize_by_sentence?num_sentences=3&min_length=25&max_length
+```
 This endpoint accepts a text/plain input which represents the text that you want to summarize. Parameters can also be 
 passed as request arguments. The accepted arguments are:
 
@@ -210,7 +219,7 @@ passed as request arguments. The accepted arguments are:
 An example of a request is the following:
 
 ```
-POST http://localhost:5000/summarize?ratio=0.1
+POST http://localhost:18080/summarize_by_ratio?ratio=0.1
 
 Content-type: text/plain
 

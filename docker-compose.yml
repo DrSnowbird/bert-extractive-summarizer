@@ -1,0 +1,35 @@
+version: '3.1' 
+
+services:
+  summary-service:
+    container_name: summary-service
+    image: summary-service
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+    #env_file:
+    #  - ./.env
+    environment:
+      - CONTAINER_NAME=run-service
+      - USER_ID=${USER_ID:-1000}
+      - GROUP_ID=${GROUP_ID:-1000}
+    volumes:
+      - /dev/shm:/dev/shm 
+      - /var/run/docker.sock:/var/run/docker.sock
+    ## -------------------------------
+    ## -- Change to your specific port
+    ## -------------------------------
+    ports:
+      - "18080:8080"
+
+    ## -----------------------------
+    ## -- Network setup if needed --
+    ## -----------------------------
+    # networks:
+    #  - dev_network
+
+#networks:
+#  dev_network:
+#    external:
+#      name: dev_network
+
